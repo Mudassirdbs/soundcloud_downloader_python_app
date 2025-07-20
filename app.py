@@ -632,11 +632,16 @@ def health_check():
     """Health check endpoint"""
     return jsonify({'status': 'healthy', 'timestamp': datetime.now().isoformat()})
 
+@app.after_request
+def add_header(response):
+    response.headers['X-Frame-Options'] = 'ALLOWALL'
+    return response
+
 if __name__ == '__main__':
     print("🎵 SoundCloud Downloader Server Starting...")
     print(f"📁 Downloads will be saved to: {os.path.abspath(DOWNLOAD_DIR)}")
     print("🌐 Server will be available at: http://localhost:5000")
     print("🧹 File cleanup: Files older than 1 hour will be automatically deleted")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
             
